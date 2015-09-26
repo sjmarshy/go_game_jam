@@ -34,7 +34,11 @@ func turn(s state) state {
 
 	s = handleEvent(ev, s)
 
-	s.dust = s.dust + uint(1+s.howManyBuilt(collectorName))
+	for _, b := range s.buildings {
+		s = handleBuildingEffect(s, b)
+	}
+
+	s.dust += 1
 	s.nextTurnEvent = tb.Event{}
 
 	return s

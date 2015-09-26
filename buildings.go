@@ -46,3 +46,26 @@ func build(s state, b building) (error, state) {
 
 	return nil, s
 }
+
+func handleDustEffect(s state, e effect) state {
+
+	switch e.action {
+	case "inc":
+		s.dust += uint(e.intensity)
+	}
+
+	return s
+}
+
+func handleBuildingEffect(s state, b building) state {
+
+	ef := b.effect
+
+	switch ef.target {
+	case "dust":
+		s = handleDustEffect(s, ef)
+		break
+	}
+
+	return s
+}
