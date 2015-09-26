@@ -3,10 +3,13 @@ package main
 import tb "github.com/nsf/termbox-go"
 
 type state struct {
-	nextTurnEvent tb.Event
-	dust          uint
-	message       string
-	buildings     []building
+	nextTurnEvent  tb.Event
+	dust           uint
+	highestDust    uint
+	message        string
+	panelFound     bool
+	firstCollector bool
+	buildings      []building
 }
 
 func (s state) canAfford(b building) bool {

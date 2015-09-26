@@ -8,42 +8,6 @@ import (
 
 const helpMessage = "Honestly, there is no help yet. You're pretty much going to have to figure it out - I'm making this game up as I go along and the plan is to get somewhere within a weekend so who knows how well that will go. Probably not well at all, but maybe that's okay. it's turn based, dust is a good and a bad thing, and I only have a vague idea where I'm going with this."
 
-func handleEvent(ev tb.Event, s state) state {
-
-	var err error
-
-	switch ev.Ch {
-	case keyc:
-
-		err, s = build(s, collector)
-
-		if err != nil {
-			s.message = err.Error()
-		}
-		break
-	}
-
-	return s
-}
-
-func turn(s state) state {
-
-	s.message = ""
-
-	ev := s.nextTurnEvent
-
-	s = handleEvent(ev, s)
-
-	for _, b := range s.buildings {
-		s = handleBuildingEffect(s, b)
-	}
-
-	s.dust += 1
-	s.nextTurnEvent = tb.Event{}
-
-	return s
-}
-
 func loop(s state) {
 
 	for {
@@ -86,7 +50,9 @@ func main() {
 
 	defer tb.Close()
 
-	s := state{}
+	s := state{
+		firstCollector: true,
+	}
 
 	loop(s)
 }
