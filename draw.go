@@ -93,7 +93,7 @@ func render(s state) {
 	w, h := tb.Size()
 
 	drawString(1, 1, fmt.Sprint("dust: ", s.dust))
-	drawString(1, 2, fmt.Sprint("[c]ollectors(10): ", s.collectors))
+	drawString(1, 2, fmt.Sprint("[c]ollectors(10): ", s.howManyBuilt("Collector")))
 
 	helpMessage := "hit [space] to take a turn, [h] for help, [q] or [Esc] to quit"
 	nextTurnMessage := fmt.Sprint("next turn:", getDescription(s.nextTurnEvent))

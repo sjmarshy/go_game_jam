@@ -1,15 +1,25 @@
 package main
 
 import (
+	_ "fmt"
 	tb "github.com/nsf/termbox-go"
 	"os"
 )
 
+const helpMessage = "Honestly, there is no help yet. You're pretty much going to have to figure it out - I'm making this game up as I go along and the plan is to get somewhere within a weekend so who knows how well that will go. Probably not well at all, but maybe that's okay. it's turn based, dust is a good and a bad thing, and I only have a vague idea where I'm going with this."
+
 func handleEvent(ev tb.Event, s state) state {
+
+	var err error
 
 	switch ev.Ch {
 	case keyc:
-		s.collectors++
+
+		err, s = build(s, collector)
+
+		if err != nil {
+			s.message = err.Error()
+		}
 		break
 	}
 
@@ -18,16 +28,14 @@ func handleEvent(ev tb.Event, s state) state {
 
 func turn(s state) state {
 
+	s.message = ""
+
 	ev := s.nextTurnEvent
 
 	s = handleEvent(ev, s)
 
-	incDustBy := 1 + s.collectors
-	s.dust = s.dust + incDustBy
+	s.dust = s.dust + uint(1+s.howManyBuilt(collectorName))
 	s.nextTurnEvent = tb.Event{}
-
-	// messages only last for a single turn
-	s.message = ""
 
 	return s
 }
@@ -52,7 +60,7 @@ func loop(s state) {
 					os.Exit(0)
 					break
 				case keyh:
-					s.message = "super long help message just to see if the line splits like it should. I mean it wont yet because I havent done the draw function right but you know, you know buddy. You know."
+					s.message = helpMessage
 					render(s)
 					break
 				default:
