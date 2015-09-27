@@ -13,13 +13,18 @@ func (e *cantAffordError) Error() string {
 type effect struct {
 	target    string
 	action    string
-	intensity int
+	intensity float32
 }
 
 type building struct {
-	name     string
-	baseCost uint
-	effect   effect
+	name       string
+	baseCost   float32
+	costAdjust func(amt int, baseCost float32) float32
+	effect     effect
+}
+
+func (b building) currentCost(s state) float32 {
+	return b.costAdjust(s.howManyBuilt(b.name), b.baseCost)
 }
 
 const collectorName = "Collector"
@@ -27,6 +32,10 @@ const collectorName = "Collector"
 var collector building = building{
 	name:     collectorName,
 	baseCost: 10,
+	costAdjust: func(amt int, baseCost float32) float32 {
+
+		return float32(amt)*1.5 + baseCost
+	},
 	effect: effect{
 		"dust",
 		"inc",
@@ -37,11 +46,11 @@ var collector building = building{
 func build(s state, b building) (error, state) {
 
 	if s.canAfford(b) {
-		decreaseDust(&s, b.baseCost)
+		decreaseDust(&s, b.currentCost(s))
 		addBuilding(&s, b)
 	} else {
 
-		return &cantAffordError{fmt.Sprint(b.name, " costs ", b.baseCost, " to build")}, s
+		return &cantAffordError{fmt.Sprint(b.name, " costs ", b.currentCost(s), " to build")}, s
 	}
 
 	return nil, s
@@ -51,7 +60,7 @@ func handleDustEffect(s state, e effect) state {
 
 	switch e.action {
 	case "inc":
-		s.dust += uint(e.intensity)
+		s.dust += e.intensity
 	}
 
 	return s

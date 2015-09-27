@@ -95,7 +95,7 @@ func render(s state) {
 	drawString(1, 1, fmt.Sprint("dust: ", s.dust))
 
 	if s.panelFound && s.highestDust >= 10 {
-		drawString(1, 2, fmt.Sprint("[c]ollectors(10): ", s.howManyBuilt("Collector")))
+		drawString(1, 2, fmt.Sprint("[c]ollectors(", collector.currentCost(s), "): ", s.howManyBuilt("Collector")))
 	}
 
 	helpMessage := "hit [space] to take a turn, [h] for help, [q] or [Esc] to quit"

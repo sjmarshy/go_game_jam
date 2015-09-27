@@ -4,8 +4,8 @@ import tb "github.com/nsf/termbox-go"
 
 type state struct {
 	nextTurnEvent  tb.Event
-	dust           uint
-	highestDust    uint
+	dust           float32
+	highestDust    float32
 	message        string
 	panelFound     bool
 	firstCollector bool
@@ -14,12 +14,12 @@ type state struct {
 
 func (s state) canAfford(b building) bool {
 
-	cost := b.baseCost
+	cost := b.currentCost(s)
 
 	return s.dust >= cost
 }
 
-func decreaseDust(s *state, by uint) {
+func decreaseDust(s *state, by float32) {
 	s.dust -= by
 }
 
