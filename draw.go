@@ -94,12 +94,28 @@ func render(s state) {
 
 	drawString(1, 1, fmt.Sprint("dust: ", s.dust))
 
-	if s.panelFound && s.highestDust >= 10 {
-		drawString(1, 2, fmt.Sprint("[c]ollectors(", collector.currentCost(s), "): ", s.howManyBuilt("Collector")))
+	if s.howManyBuilt(searcher.name) > 0 {
+		drawString(1, 2, fmt.Sprint("data disks: ", s.disks))
+	}
+
+	if s.highestDust >= collector.baseCost {
+
+		drawString(1, 3,
+			fmt.Sprint(
+				"[c]ollectors(", collector.currentCost(s), "): ",
+				s.howManyBuilt(collector.name)))
+	}
+
+	if s.highestDust >= searcher.baseCost {
+
+		drawString(1, 4, fmt.Sprint(
+			"[s]earcher(", searcher.currentCost(s), "):  ",
+			s.howManyBuilt(searcher.name)))
 	}
 
 	helpMessage := "hit [space] to take a turn, [h] for help, [q] or [Esc] to quit"
-	nextTurnMessage := fmt.Sprint("next turn:", getDescription(s.nextTurnEvent))
+	nextTurnMessage := fmt.Sprint(
+		"next turn:", getDescription(s.nextTurnEvent))
 
 	drawString((w/2)-(len(helpMessage)/2), h-1, helpMessage)
 	drawString((w/2)-(len(nextTurnMessage)/2), h-2, nextTurnMessage)

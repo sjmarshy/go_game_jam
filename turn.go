@@ -7,6 +7,15 @@ func handleEvent(ev tb.Event, s state) state {
 	var err error
 
 	switch ev.Ch {
+	case keys:
+		if s.panelFound {
+			err, s = build(s, searcher)
+
+			if err != nil {
+				s.message = err.Error()
+			}
+		}
+		break
 	case keyc:
 		if s.panelFound {
 			err, s = build(s, collector)
@@ -49,9 +58,21 @@ func turn(s state) state {
 		s.message = "something flickers on the screen as your're digging, and you see a set of characters appear. Something about 'collectors'. You figure it might be worth a prod"
 	}
 
-	if s.howManyBuilt(collectorName) == 1 && s.firstCollector {
-		s.firstCollector = false
+	if s.highestDust >= 50 && s.firsts[searcher.name] {
+
+		s.message = "another flicker, another word on the screen. Something about 'searchers' this time. Cool"
+	}
+
+	if s.howManyBuilt(collector.name) == 1 && s.firsts[collector.name] {
+		s.firsts[collector.name] = false
 		s.message = "the dust you seem to have collected under your fingernails clumps together in front of your eyes and, with a faint blue sheen, lands in front of you. The dust around it seems to be attracted to it"
+	}
+
+	if s.howManyBuilt(searcher.name) == 1 && s.firsts[searcher.name] {
+		s.firsts[searcher.name] = false
+		s.message = "another glob forms from the pieces you have" +
+			" collected, but these ones zip off and start collecting " +
+			"little pieces of plastic. Maybe you need these things"
 	}
 
 	return s

@@ -27,22 +27,6 @@ func (b building) currentCost(s state) float32 {
 	return b.costAdjust(s.howManyBuilt(b.name), b.baseCost)
 }
 
-const collectorName = "Collector"
-
-var collector building = building{
-	name:     collectorName,
-	baseCost: 10,
-	costAdjust: func(amt int, baseCost float32) float32 {
-
-		return float32(amt)*1.5 + baseCost
-	},
-	effect: effect{
-		"dust",
-		"inc",
-		1,
-	},
-}
-
 func build(s state, b building) (error, state) {
 
 	if s.canAfford(b) {
@@ -66,6 +50,15 @@ func handleDustEffect(s state, e effect) state {
 	return s
 }
 
+func handleDiskEffect(s state, e effect) state {
+	switch e.action {
+	case "inc":
+		s.disks += e.intensity
+	}
+
+	return s
+}
+
 func handleBuildingEffect(s state, b building) state {
 
 	ef := b.effect
@@ -74,7 +67,37 @@ func handleBuildingEffect(s state, b building) state {
 	case "dust":
 		s = handleDustEffect(s, ef)
 		break
+	case "disks":
+		s = handleDiskEffect(s, ef)
+		break
 	}
 
 	return s
+}
+
+var collector building = building{
+	name:     "Collector",
+	baseCost: 10,
+	costAdjust: func(amt int, baseCost float32) float32 {
+
+		return float32(amt)*1.5 + baseCost
+	},
+	effect: effect{
+		"dust",
+		"inc",
+		1,
+	},
+}
+
+var searcher building = building{
+	name:     "Searcher",
+	baseCost: 50,
+	costAdjust: func(amt int, baseCost float32) float32 {
+		return float32(amt)*1.8 + baseCost
+	},
+	effect: effect{
+		"disks",
+		"inc",
+		0.1,
+	},
 }

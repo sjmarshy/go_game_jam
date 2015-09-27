@@ -51,7 +51,10 @@ func main() {
 	defer tb.Close()
 
 	s := state{
-		firstCollector: true,
+		firsts: map[string]bool{
+			collector.name: true,
+			searcher.name:  true,
+		},
 	}
 
 	loop(s)
